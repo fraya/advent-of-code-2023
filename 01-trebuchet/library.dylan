@@ -16,9 +16,6 @@ define library trebuchet
 end library;
 
 define module trebuchet  
-//  create
-//    <line-wrapper-stream>;
-
   export
     calibration,
     read-lines,
