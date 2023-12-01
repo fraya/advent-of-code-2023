@@ -14,7 +14,7 @@ end;
 define function calibration
     (sequence :: <sequence>) => (calibration :: <integer>)
   let digits = choose(decimal-digit?, sequence);
-  if (digits.size = 0)
+  if (digits.empty?)
     0;
   else
     let calibration-digits = vector(first(digits), last(digits));
