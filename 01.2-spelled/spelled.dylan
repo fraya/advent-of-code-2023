@@ -51,7 +51,7 @@ define constant $forward-dictionaries
 define constant $reversed-dictionaries
   = list($numbers-dictionary, $reversed-words-dictionary);
 
-define function find-first-number
+define function find-number
     (dictionaries :: <sequence>, string :: <string>)
  => (number :: false-or(<string>))
   block(return)
@@ -72,26 +72,10 @@ define function find-first-number
   end block;
 end;
 
-define function find-first
-    (string :: <string>)
- => (number :: <string>)
-  let digit = find-first-number($forward-dictionaries, string);
-  digit | "0"
-end;
-
-define function find-last
-    (string :: <string>)
- => (number :: <string>)
-  let reversed = reverse(string);
-  let digit = find-first-number($reversed-dictionaries, reversed);
-  digit | "0"
-end;
-
 define function calibration
     (string :: <string>) => (calibration :: <integer>)
-  let first-number = find-first(string);
-  let last-number  = find-last(string);
-  let digits       = concatenate(first-number, last-number);
-  string-to-integer(digits);
+  let first = find-number($forward-dictionaries, string) | "0";
+  let last  = find-number($reversed-dictionaries, reverse(string)) | "0";
+  string-to-integer(concatenate(first, last));
 end;
 
