@@ -3,10 +3,12 @@ Module: dylan-user
 define library conumdrum
   use common-dylan;
   use io,
-    import: { format-out,
+    import: { format,
+	      format-out,
 	      print,
 	      streams };
   use regular-expressions;
+  use strings;
 
   export
     conumdrum,
@@ -20,21 +22,22 @@ define module conumdrum
 
   create
     <color>,
-    <game-hand>,
     <game>;
 
   export
-    game-hand-reds,
-    game-hand-blues,
-    game-hand-greens;
+    make-game,
+    game-id;
 
 end module;
 
 define module conumdrum-impl
   use common-dylan;
+  use format;
+  use format-out;
   use print;
   use regular-expressions;
   use streams;
+  use strings, import { strip };
   
   use conumdrum;
 end module;

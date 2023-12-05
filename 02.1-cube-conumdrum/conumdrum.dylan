@@ -9,44 +9,51 @@ define constant <positive>
 define constant <color>
   = one-of(#"blue", #"green", #"red");
 
-define constant $re-game-id :: <regex>
-  = compile-regex("Game (\\d):.*");
+define constant $re-game :: <regex>
+  = compile-regex("Game (\\d+):(.*)");
 
-define class <game-hand> (<object>)
-  slot game-hand-reds :: <natural>,
-    init-keyword: reds:,
-    setter: #f,
-    init-value: 0;
-  slot game-hand-greens :: <natural>,
-    init-keyword: greens:,
-    setter: #f,
-    init-value: 0;
-  slot game-hand-blues :: <natural>,
-    init-keyword: blues:,
-    setter: #f,
-    init-value: 0;
-end class;
+define constant $re-cube :: <regex>
+  = compile-regex("\\s*(\\d+)\\s(\\w+)");
+
+define constant <round> = <object-table>;
 
 define class <game> (<object>)
-  slot game-record :: <string>,
-    required-init-keyword: record:,
-    setter: #f;
-  virtual slot game-id :: <string>,
-    setter: #f;
+  constant slot game-id :: <string> = "0",
+    init-keyword: id:;
+  constant slot game-rounds :: <sequence> = make(<stretchy-vector>),
+    init-keyword: rounds:;
 end class;
 
 define method print-object
     (game :: <game>, stream :: <stream>) => ()
-  write(stream, game.game-id)
+  format(stream, "<game> %s %=", game.game-id, game.game-rounds)
 end;
 
-define method game-id
-    (game :: <game>) => (id :: <string>)
-  let match = regex-search($re-game-id, game.game-record);
-  if (match)
-    match-group(match, 1)
+define function make-round
+    (line :: <string>) => (round :: <round>)
+  let round = make(<round>);
+  for (cube in split(strip(line), ","))
+    let match-cube = regex-search($re-cube, strip(cube));
+    if (match-cube)
+      let amount = string-to-integer(match-group(match-cube, 1));
+      let color  = as(<symbol>, match-group(match-cube, 2));
+      round[color] := amount
+    else
+      error("Can't parse game hand: %s", line);
+    end if;
+  end for;
+  round
+end;
+
+define method make-game
+    (log :: <string>) => (game :: <game>)
+  let match-game  = regex-search($re-game, log);
+  if (match-game)
+    let id     = match-group(match-game, 1);
+    let rounds = split(match-group(match-game, 2), ";");
+    make(<game>, id: id, rounds: map(make-round, rounds))
   else
-    error("Can't parse game id: %s", game.game-record)
-  end
+    error("Can't parse game id: %s", log)
+  end if;
 end method;
 

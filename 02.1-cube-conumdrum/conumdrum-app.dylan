@@ -20,8 +20,8 @@ define function main
     for (line = read-line(fs, on-end-of-stream: #f)
 	   then read-line(fs, on-end-of-stream: #f),
 	 while: line)
-      let game = make(<game>, record: line);
-      format-out("Game %= parsed\n", game);
+      let game = make-game(line);
+      format-out("%=\n", game);
       force-out();
     end;
   end;
