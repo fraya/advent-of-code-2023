@@ -9,6 +9,9 @@ define constant <positive>
 define constant <color>
   = one-of(#"blue", #"green", #"red");
 
+define constant $colors
+  = #(#"red", #"blue", #"green");
+
 define constant $re-game :: <regex>
   = compile-regex("Game (\\d+):(.*)");
 
@@ -89,4 +92,27 @@ define function sum-of-ids
  => (sum :: <integer>)
   let fn = compose(string-to-integer, game-id);
   reduce1(\+, map(fn, games))
+end;
+
+define function minimum-cubes-for-game
+    (game :: <game>) => (cubes :: <cubes>)
+  local method color-of-round (color, round)
+	  element(round, color, default: 0)
+	end;
+  let cubes = make(<cubes>);
+  for (color in $colors)
+    let color-of  = curry(color-of-round, color);
+    let min-value = apply(max, map(color-of, game.game-rounds));
+    cubes[color] := min-value
+  end for;
+  cubes
+end;
+
+define function power-of-cubes
+    (cubes :: <cubes>) => (power :: <integer>)
+  let power = 1;
+  for (color in cubes.key-sequence)
+    power := power * cubes[color];
+  end;
+  power
 end;

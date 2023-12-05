@@ -28,7 +28,9 @@ define module conumdrum
   export
     make-game,
     games-possible,
-    sum-of-ids;
+    sum-of-ids,
+    minimum-cubes-for-game,
+    power-of-cubes;
 
 end module;
 
