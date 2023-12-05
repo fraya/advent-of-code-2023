@@ -22,11 +22,13 @@ define module conumdrum
 
   create
     <color>,
+    <cubes>,
     <game>;
 
   export
     make-game,
-    game-id;
+    games-possible,
+    sum-of-ids;
 
 end module;
 
